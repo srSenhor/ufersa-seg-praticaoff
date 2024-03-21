@@ -35,5 +35,6 @@ O objetivo do projeto é fazer uma simulação de um sistema cliente/servidor pa
 - Ao iniciar o sistema, para fins de estudo, o servidor inicializa com três contas criadas.
 
 ### Tecnologias utilizadas
-- Visual Studio Code
-- Java SE 17
+- RSA para assinatura das mensagens, codificado em Base64
+- AES para encriptação de mensagens, codificado em Base64
+- RMI para comunicação cliente-servidor (processos)
