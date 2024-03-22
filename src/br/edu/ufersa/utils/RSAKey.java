@@ -1,9 +1,11 @@
 package br.edu.ufersa.utils;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class RSAKey {
+public class RSAKey implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private BigInteger factor1;
     private BigInteger factor2;
 
@@ -36,8 +38,6 @@ public class RSAKey {
             System.err.println("not allowed number");
             this.factor2 = BigInteger.ZERO;
         }
-    }
-
-    
+    }    
 
 }

@@ -1,12 +1,14 @@
 package br.edu.ufersa.security;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import br.edu.ufersa.utils.RSAKey;
 
-public class RSAImpl {
+public class RSAImpl implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private RSAKey puKey;
     private RSAKey prKey;
 
