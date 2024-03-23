@@ -43,11 +43,20 @@ public class GUI {
             Option: """);
     }
 
-    public static void listOps() {
+    public static void investmentOps() {
         System.out.print("""
-            Listing by...?
-            [1]    -    General
-            [2]    -    Category
+            What kind of investment do you to do...?
+            [1]    -    Savings
+            [2]    -    Fixed Income
+
+            Option: """);
+    }
+
+    public static void investmentCheckOps() {
+        System.out.print("""
+            What kind of investment do you want to check...?
+            [1]    -    Savings
+            [2]    -    Fixed Income
 
             Option: """);
     }

@@ -5,8 +5,10 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import br.edu.ufersa.service.AuthServiceImpl;
+import br.edu.ufersa.service.BankingServiceImpl;
 import br.edu.ufersa.service.SessionServiceImpl;
 import br.edu.ufersa.service.skeletons.AuthService;
+import br.edu.ufersa.service.skeletons.BankingService;
 import br.edu.ufersa.service.skeletons.SessionService;
 import br.edu.ufersa.utils.ServicePorts;
 
@@ -30,13 +32,13 @@ public class GatewayServer {
             Registry authReg = LocateRegistry.getRegistry( ServicePorts.AUTH_PORT.getValue() );
             authReg.bind("Auth", authSkeleton);
 
-            // DealerServiceImpl dealerObjRef = new DealerServiceImpl();
-            // DealerService dealerSkeleton = (DealerService) UnicastRemoteObject.exportObject(dealerObjRef, 0);
+            BankingServiceImpl bankObjRef = new BankingServiceImpl();
+            BankingService bankSkeleton = (BankingService) UnicastRemoteObject.exportObject(bankObjRef, 0);
 
-            // LocateRegistry.createRegistry( ServicePorts.DEALER_PORT.getValue() );
-            // Registry dealerReg = LocateRegistry.getRegistry( ServicePorts.DEALER_PORT.getValue() );
-            // dealerReg.bind("Dealer", dealerSkeleton);
-
+            LocateRegistry.createRegistry( ServicePorts.BANKING_PORT.getValue() );
+            Registry bankReg = LocateRegistry.getRegistry( ServicePorts.BANKING_PORT.getValue() );
+            bankReg.bind("Banking", bankSkeleton);
+            
             System.out.println("Server is running now: ");
 
         } catch (Exception e) {

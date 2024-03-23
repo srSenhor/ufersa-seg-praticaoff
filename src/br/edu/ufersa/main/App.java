@@ -91,6 +91,6 @@ public class App {
     }
 
     private void mainMenu(SessionLogin login){
-        // new Client(login);
+        new Client(login);
     }
 }

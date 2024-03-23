@@ -8,12 +8,18 @@ import br.edu.ufersa.security.RSAImpl;
 public class SessionLogin implements Serializable{
 
     private static final long serialVersionUID = 1L;
+    private long accountId;
     private RSAImpl sessionRSA;
     private SecretKey sKey;
 
-    public SessionLogin(RSAImpl sessionRSA, SecretKey sKey) {
+    public SessionLogin(long accountId, RSAImpl sessionRSA, SecretKey sKey) {
+        this.accountId = accountId;
         this.setSessionRSA(sessionRSA);
         this.setSKey(sKey);
+    }
+
+    public long getAccountId() {
+        return accountId;
     }
 
     private void setSessionRSA(RSAImpl sessionRSA) {

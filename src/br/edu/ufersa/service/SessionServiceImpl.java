@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import javax.crypto.SecretKey;
+// import javax.crypto.spec.IvParameterSpec;
 
+import br.edu.ufersa.entities.SessionLogin;
 import br.edu.ufersa.service.skeletons.SessionService;
 import br.edu.ufersa.utils.RSAKey;
 
@@ -18,9 +20,8 @@ public class SessionServiceImpl implements SessionService {
         session_aes_keys = new HashMap<>();
     }
     
-
     @Override
-    public RSAKey getSessionLogin(long accID) throws RemoteException {
+    public RSAKey getRSAKey(long accID) throws RemoteException {
         return session_pukeys.get(accID);
     }
 
@@ -30,15 +31,15 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void openSession(long accID, RSAKey pukey, SecretKey aesKey) throws RemoteException {
-        session_pukeys.put(accID, pukey);
-        session_aes_keys.put(accID, aesKey);
+    public void openSession(long accID, SessionLogin login) throws RemoteException {
+        session_pukeys.put(accID, login.getSessionRSA().getPublicKey());
+        session_aes_keys.put(accID, login.getsKey());
     }
 
     @Override
     public void closeSession(long accID) throws RemoteException {
-        session_pukeys.get(accID);
-        session_aes_keys.get(accID);
+        session_pukeys.remove(accID);
+        session_aes_keys.remove(accID);
     }
 
 }

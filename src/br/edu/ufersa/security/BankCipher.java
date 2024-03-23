@@ -8,7 +8,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-// import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 
 public class BankCipher {
 
@@ -19,6 +19,7 @@ public class BankCipher {
     public BankCipher() throws NoSuchAlgorithmException {
         this.aes = new AESImpl(192);
         this.skey = aes.getKey();
+        // this.iv = aes.getIv();
     }
 
     public BankCipher(SecretKey skey) throws NoSuchAlgorithmException {
@@ -27,11 +28,11 @@ public class BankCipher {
         // this.iv = aes.getIv();
     }
 
-    // public BankCipher(SecretKey skey, IvParameterSpec iv) throws NoSuchAlgorithmException {
-    //     this.aes = new AESImpl(skey, iv);
-    //     this.skey = skey;
-    //     this.iv = iv;
-    // }
+    public BankCipher(SecretKey skey, IvParameterSpec iv) throws NoSuchAlgorithmException {
+        this.aes = new AESImpl(skey, iv);
+        this.skey = skey;
+        // this.iv = iv;
+    }
 
     public SecretKey getKey() {
         return skey;
@@ -46,7 +47,7 @@ public class BankCipher {
     }
 
     public String dec(String message) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException { 
-        return message = aes.decrypt(message);
+        return aes.decrypt(message);
     }
 
     public String genHash(String message) {

@@ -38,20 +38,15 @@ public class AuthServiceImpl implements AuthService {
 
             try {
 
-                System.out.println("Cheguei até aqui ó");
-
                 bc = new BankCipher();
-                System.err.println("Conta logada: " + acc);
-                
-                login = new SessionLogin(new RSAImpl(), bc.getKey());
-                System.err.println("Login da sessão: " + login.toString());
-    
+                login = new SessionLogin(acc.getAccountID(), new RSAImpl(), bc.getKey());
+            
             } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
-            stub.openSession(accID, login.getSessionRSA().getPublicKey(), login.getsKey());
+            stub.openSession(accID, login);
+            
             return login;    
 
         } else {
@@ -66,26 +61,21 @@ public class AuthServiceImpl implements AuthService {
         Account acc = new Account(new SecureRandom().nextLong(65536), pass, cpf, name, addr, phone);
         accounts.put(acc.getAccountID(), acc);
 
-        System.err.println("Conta criada: " + acc);
-
         BankCipher bc = null;
         SessionLogin login = null;
 
         try {
             
             bc = new BankCipher();
-            login = new SessionLogin(new RSAImpl(), bc.getKey());
-
+            login = new SessionLogin(acc.getAccountID(), new RSAImpl(), bc.getKey());
+           
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
 
-        stub.openSession(acc.getAccountID(),
-                         login.getSessionRSA().getPublicKey(),
-                         login.getsKey());
+        stub.openSession(acc.getAccountID(), login);
         
-        System.err.println("Sessão criada: " + login);
 
         return login;
 
