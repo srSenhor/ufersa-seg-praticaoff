@@ -33,7 +33,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public void openSession(long accID, SessionLogin login) throws RemoteException {
         session_pukeys.put(accID, login.getSessionRSA().getPublicKey());
-        session_aes_keys.put(accID, login.getsKey());
+        session_aes_keys.put(accID, login.getAesKey());
     }
 
     @Override

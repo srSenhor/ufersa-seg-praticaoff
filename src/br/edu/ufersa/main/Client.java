@@ -17,7 +17,7 @@ import br.edu.ufersa.entities.Request;
 import br.edu.ufersa.entities.SessionLogin;
 import br.edu.ufersa.security.BankCipher;
 import br.edu.ufersa.service.skeletons.BankingService;
-import br.edu.ufersa.service.skeletons.SessionService;
+// import br.edu.ufersa.service.skeletons.SessionService;
 import br.edu.ufersa.utils.GUI;
 import br.edu.ufersa.utils.ServicePorts;
 
@@ -26,7 +26,7 @@ public class Client {
     private SessionLogin login;
     private Scanner cin;
     private BankingService bankingStub;
-    private SessionService sessionStub;
+    // private SessionService sessionStub;
     
     public Client(SessionLogin login) {
         this.login = login;
@@ -38,8 +38,8 @@ public class Client {
 
         try {
             
-            Registry sessionReg = LocateRegistry.getRegistry("localhost", ServicePorts.SESSION_PORT.getValue());
-            this.sessionStub = (SessionService) sessionReg.lookup("Session");
+            // Registry sessionReg = LocateRegistry.getRegistry("localhost", ServicePorts.SESSION_PORT.getValue());
+            // this.sessionStub = (SessionService) sessionReg.lookup("Session");
             Registry bankingReg = LocateRegistry.getRegistry("localhost", ServicePorts.BANKING_PORT.getValue());
             this.bankingStub = (BankingService) bankingReg.lookup("Banking");
 
@@ -58,8 +58,9 @@ public class Client {
 
             switch (op) {
                 case 1:
-                    System.out.println("teste");
+                    System.out.println("========= ACCOUNT INFO =========\n");
                     send(1, login.getAccountId(), -1, -1, -1);
+                    System.out.println("================================");
                     cin.nextLine();
                     
                     break;
@@ -80,7 +81,7 @@ public class Client {
         
         try {
             
-            BankCipher bc = new BankCipher(login.getsKey());
+            BankCipher bc = new BankCipher(login.getAesKey());
             request = bc.enc(request);
 
             String hash = bc.genHash(request);           
@@ -88,7 +89,13 @@ public class Client {
 
             Message response = bankingStub.receive(senderID, new Message(request, hash));
 
-            System.out.println(response.toString());
+            String responseTestHash = login.getSessionRSA().checkSign(response.getHash(), login.getServerPuKey());
+
+            if(!bc.genHash(response.getContent()).equals(responseTestHash)) {
+                System.err.println("Não foi possível realizar operação");
+            } else {
+                System.err.println(bc.dec(response.getContent()));
+            }
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

@@ -72,7 +72,12 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account [cpf=" + cpf + ", clientName=" + clientName + ", address=" + address + ", phoneNumber="
-                + phoneNumber + "]";
+        // return "Account [cpf=" + cpf + ", clientName=" + clientName + ", address=" + address + ", phoneNumber="
+        //         + phoneNumber + "]";
+        return  "Account ID : " + accountID + "\n" +
+                "CPF        : " + cpf + "\n" + 
+                "Name       : " + clientName + "\n" + 
+                "Address    : " + address + "\n" + 
+                "Phone      : " + phoneNumber + "\n";
     }
 }

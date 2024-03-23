@@ -25,6 +25,13 @@ public class GatewayServer {
             Registry sessionReg = LocateRegistry.getRegistry( ServicePorts.SESSION_PORT.getValue() );
             sessionReg.bind("Session", sessionSkeleton);
 
+            BankingServiceImpl bankObjRef = new BankingServiceImpl();
+            BankingService bankSkeleton = (BankingService) UnicastRemoteObject.exportObject(bankObjRef, 0);
+
+            LocateRegistry.createRegistry( ServicePorts.BANKING_PORT.getValue() );
+            Registry bankReg = LocateRegistry.getRegistry( ServicePorts.BANKING_PORT.getValue() );
+            bankReg.bind("Banking", bankSkeleton);
+            
             AuthServiceImpl authObjRef = new AuthServiceImpl();
             AuthService authSkeleton = (AuthService) UnicastRemoteObject.exportObject(authObjRef, 0);
 
@@ -32,12 +39,6 @@ public class GatewayServer {
             Registry authReg = LocateRegistry.getRegistry( ServicePorts.AUTH_PORT.getValue() );
             authReg.bind("Auth", authSkeleton);
 
-            BankingServiceImpl bankObjRef = new BankingServiceImpl();
-            BankingService bankSkeleton = (BankingService) UnicastRemoteObject.exportObject(bankObjRef, 0);
-
-            LocateRegistry.createRegistry( ServicePorts.BANKING_PORT.getValue() );
-            Registry bankReg = LocateRegistry.getRegistry( ServicePorts.BANKING_PORT.getValue() );
-            bankReg.bind("Banking", bankSkeleton);
             
             System.out.println("Server is running now: ");
 

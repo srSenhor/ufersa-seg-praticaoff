@@ -5,33 +5,39 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 
-import br.edu.ufersa.entities.Account;
 import br.edu.ufersa.entities.SessionLogin;
+import br.edu.ufersa.entities.User;
 import br.edu.ufersa.security.BankCipher;
 import br.edu.ufersa.security.RSAImpl;
 import br.edu.ufersa.service.skeletons.AuthService;
+import br.edu.ufersa.service.skeletons.BankingService;
 import br.edu.ufersa.service.skeletons.SessionService;
+import br.edu.ufersa.utils.RSAKey;
 import br.edu.ufersa.utils.ServicePorts;
 
 public class AuthServiceImpl implements AuthService {
 
-    private static HashMap<Long, Account> accounts;
-    private static SessionService stub;
+    // private static HashMap<Long, Account> accounts;
+    private static HashMap<Long, User> users;
+    private static SessionService sessionStub;
+    private static BankingService bankStub;
+    private static RSAKey serverPuKey;
     
     public AuthServiceImpl() {
-        accounts = new HashMap<>();
+        // accounts = new HashMap<>();
+        users = new HashMap<>();
         this.init();
     }
 
     @Override
     public SessionLogin auth(long accID, String password) throws RemoteException {
         
-        Account acc = accounts.get(accID);
+        // Account acc = accounts.get(accID);
+        User user = users.get(accID);
 
-        if (acc.getPassword().equals(password)) {
+        if (user.getPassword().equals(password)) {
 
             BankCipher bc = null;
             SessionLogin login = null;
@@ -39,13 +45,13 @@ public class AuthServiceImpl implements AuthService {
             try {
 
                 bc = new BankCipher();
-                login = new SessionLogin(acc.getAccountID(), new RSAImpl(), bc.getKey());
+                login = new SessionLogin(user.getAccID(), new RSAImpl(), serverPuKey, bc.getKey());
             
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
 
-            stub.openSession(accID, login);
+            sessionStub.openSession(accID, login);
             
             return login;    
 
@@ -58,44 +64,39 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SessionLogin record(String pass, String cpf, String name, String addr, String phone) throws RemoteException {
         
-        Account acc = new Account(new SecureRandom().nextLong(65536), pass, cpf, name, addr, phone);
-        accounts.put(acc.getAccountID(), acc);
+        SessionLogin login = bankStub.record(this.getClass().getName(), pass, cpf, name, addr, phone);
 
-        BankCipher bc = null;
-        SessionLogin login = null;
-
-        try {
-            
-            bc = new BankCipher();
-            login = new SessionLogin(acc.getAccountID(), new RSAImpl(), bc.getKey());
-           
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        if (login != null) {
+            System.out.println("Id da conta gerado: " + login.getAccountId());
+            users.put(login.getAccountId(), new User(login.getAccountId(), pass));
+            sessionStub.openSession(login.getAccountId(), login);
         }
 
-
-        stub.openSession(acc.getAccountID(), login);
         
-
         return login;
-
     }
 
-    private void record(long accID, String pass, String cpf, String name, String addr, String phone) throws RemoteException {
+    // private void record(long accID, String pass, String cpf, String name, String addr, String phone) throws RemoteException {
         
-        Account acc = new Account(accID, pass, cpf, name, addr, phone);
-        accounts.put(acc.getAccountID(), acc);
+    //     Account acc = new Account(accID, pass, cpf, name, addr, phone);
+    //     accounts.put(acc.getAccountID(), acc);
 
-    }
+    // }
 
     private void init() {
         try {
 
             Registry reg = LocateRegistry.getRegistry("localhost", ServicePorts.SESSION_PORT.getValue());
-            stub = (SessionService) reg.lookup("Session");
+            sessionStub = (SessionService) reg.lookup("Session");
+            Registry bankReg = LocateRegistry.getRegistry("localhost", ServicePorts.BANKING_PORT.getValue());
+            bankStub = (BankingService) bankReg.lookup("Banking");
 
-            this.record(12345L, "senha123", "12345678910", "Seu toinho", "Rua da lagoa", "988994325");
-            this.record(24235L, "senha456", "10987654321", "Seu jão", "Rua da lagoa", "988994234");
+            serverPuKey = bankStub.getPuKey();
+
+            users.put(12345L, new User(12345L, "senha123"));
+            users.put(67890L, new User(67890L, "senha456"));
+            // this.record(12345L, "senha123", "12345678910", "Seu toinho", "Rua da lagoa", "988994325");
+            // this.record(24235L, "senha456", "10987654321", "Seu jão", "Rua da lagoa", "988994234");
 
         } catch (RemoteException e) {
             e.printStackTrace();

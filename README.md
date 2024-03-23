@@ -38,3 +38,7 @@ O objetivo do projeto é fazer uma simulação de um sistema cliente/servidor pa
 - RSA para assinatura das mensagens, codificado em Base64
 - AES para encriptação de mensagens, codificado em Base64
 - RMI para comunicação cliente-servidor (processos)
+
+## Notas do autor
+
+- Para o serviço de banco de dados, acabei usando só o RMI pela dificuldade - minha - de trabalhar com sockets, mas seria o ideial ter um server socket conectado direto com os serviços fornecendo as informações. Dado o aviso, esse trabalho é meramente ilustrativo.
