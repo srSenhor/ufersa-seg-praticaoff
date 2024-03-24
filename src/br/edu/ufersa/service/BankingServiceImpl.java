@@ -40,6 +40,16 @@ public class BankingServiceImpl implements BankingService {
     @Override
     public Message receive(long accID, Message message) throws RemoteException {
 
+        Account acc = accounts.get(accID);
+
+        if (acc == null) {
+            return null;
+        }
+
+        if (message == null || message.getContent() == null || message.getHash() == null) {
+            return null;
+        }
+
         RSAKey clientPuKey = sessionStub.getRSAKey(accID);
         String receivedHash = rsa.checkSign(message.getHash(), clientPuKey);
         BankCipher bc = null;
@@ -196,10 +206,6 @@ public class BankingServiceImpl implements BankingService {
             float balance = senderAcc.getBalance();
             StringBuilder info = new StringBuilder();
 
-            // TODO: Remover depois do debug
-            // System.out.println(senderAcc.getAccountID() + " balance: " + senderAcc.getBalance());
-            // System.out.println(receiverAcc.getAccountID() + " balance: " + receiverAcc.getBalance());
-
             if (amount > 0.0f && balance > 0.0f && balance >= amount) {
                 senderAcc.setBalance(balance - amount);
                 receiverAcc.setBalance(receiverAcc.getBalance() + amount);
@@ -209,12 +215,6 @@ public class BankingServiceImpl implements BankingService {
                 info.append("R$ " + balance);
                 
                 response.setContent(info.toString());
-
-                // TODO: Remover depois do debug
-                // System.out.println( senderAcc.getAccountID() + " sends R$" 
-                //     + amount + " to " + receiverAcc.getAccountID() );
-                // System.out.println(senderAcc.getAccountID() + " balance: " + senderAcc.getBalance());
-                // System.out.println(receiverAcc.getAccountID() + " balance: " + receiverAcc.getBalance());
 
             } else {
                 response.setContent("cannot transfer this amount...");
@@ -240,12 +240,7 @@ public class BankingServiceImpl implements BankingService {
         } else {
             float balance = senderAcc.getBalance();
             StringBuilder info = new StringBuilder();
-
-            // TODO: Remover depois do debug
-            // System.out.println(senderAcc.getAccountID() + " balance: " + senderAcc.getBalance());
-            // System.out.println(senderAcc.getAccountID() + " savings: " + senderAcc.getSavingsInvestment());
-            // System.out.println(senderAcc.getAccountID() + " fixed income: " + senderAcc.getFixedIncomeInvestment());
-            
+  
             if (amount > 0.0f && balance > 0.0f && balance >= amount) {
                 senderAcc.setBalance(balance - amount);
     
@@ -265,11 +260,6 @@ public class BankingServiceImpl implements BankingService {
                 info.append("Please, check your investments on [7] Check Investments\n");
                 
                 response.setContent(info.toString());
-
-                // TODO: Remover depois do debug
-                // System.out.println(senderAcc.getAccountID() + " balance: " + senderAcc.getBalance());
-                // System.out.println(senderAcc.getAccountID() + " savings: " + senderAcc.getSavingsInvestment());
-                // System.out.println(senderAcc.getAccountID() + " fixed income: " + senderAcc.getFixedIncomeInvestment());
             
             } else {
                 response.setContent("cannot invest this amount...");
@@ -413,11 +403,10 @@ public class BankingServiceImpl implements BankingService {
 
             Registry reg = LocateRegistry.getRegistry("localhost", ServicePorts.SESSION_PORT.getValue());
             sessionStub = (SessionService) reg.lookup("Session");
-            // Registry authReg = LocateRegistry.getRegistry("localhost", ServicePorts.AUTH_PORT.getValue());
-            // AuthService stub = (AuthService) authReg.lookup("Auth");
 
-            this.record(12345L, "senha123", "12345678910", "Seu toinho", "Rua da lagoa", "988994325", 1500.0f);
-            this.record(67890L, "senha456", "10987654321", "Seu jão", "Rua da lagoa", "988994234", 500.0f);
+            this.record(12345L, "senha123", "12345678910", "Seu Toinho", "Rua da lagoa", "988994325", 1500.0f);
+            this.record(67890L, "senha456", "10987654321", "Seu Jão", "Rua da lagoa", "988994234", 500.0f);
+            this.record(24680L, "senha246", "24681012140", "Seu Resmungão", "Rua da lagoa", "988994236", 2000.0f);
 
 
         } catch (RemoteException e) {

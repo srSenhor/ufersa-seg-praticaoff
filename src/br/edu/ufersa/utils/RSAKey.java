@@ -3,6 +3,8 @@ package br.edu.ufersa.utils;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+// TODO: Migrar essa classe para entities ? talvez
+
 public class RSAKey implements Serializable {
 
     private static final long serialVersionUID = 1L;

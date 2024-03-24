@@ -19,14 +19,12 @@ import br.edu.ufersa.utils.ServicePorts;
 
 public class AuthServiceImpl implements AuthService {
 
-    // private static HashMap<Long, Account> accounts;
     private static HashMap<Long, User> users;
     private static SessionService sessionStub;
     private static BankingService bankStub;
     private static RSAKey serverPuKey;
     
     public AuthServiceImpl() {
-        // accounts = new HashMap<>();
         users = new HashMap<>();
         this.init();
     }
@@ -34,10 +32,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SessionLogin auth(long accID, String password) throws RemoteException {
         
-        // Account acc = accounts.get(accID);
         User user = users.get(accID);
 
-        if (user.getPassword().equals(password)) {
+        if (!user.isLogged() && user.getPassword().equals(password)) {
 
             BankCipher bc = null;
             SessionLogin login = null;
@@ -50,7 +47,8 @@ public class AuthServiceImpl implements AuthService {
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
-
+            
+            user.userLoggedIn();
             sessionStub.openSession(accID, login);
             
             return login;    
@@ -67,21 +65,29 @@ public class AuthServiceImpl implements AuthService {
         SessionLogin login = bankStub.record(this.getClass().getName(), pass, cpf, name, addr, phone);
 
         if (login != null) {
-            System.out.println("Id da conta gerado: " + login.getAccountId());
-            users.put(login.getAccountId(), new User(login.getAccountId(), pass));
+
+            User user = new User(login.getAccountId(), pass);
+            users.put(login.getAccountId(), user);
+            
+            user.userLoggedIn();
             sessionStub.openSession(login.getAccountId(), login);
         }
 
-        
         return login;
     }
 
-    // private void record(long accID, String pass, String cpf, String name, String addr, String phone) throws RemoteException {
-        
-    //     Account acc = new Account(accID, pass, cpf, name, addr, phone);
-    //     accounts.put(acc.getAccountID(), acc);
+    @Override
+    public void logout(SessionLogin login) throws RemoteException {
 
-    // }
+        User user = users.get(login.getAccountId());
+
+        if(user != null && user.isLogged()) {
+            user.userLoggedOut();
+            sessionStub.closeSession(login.getAccountId());
+            return;
+        } 
+
+    }
 
     private void init() {
         try {
@@ -95,8 +101,7 @@ public class AuthServiceImpl implements AuthService {
 
             users.put(12345L, new User(12345L, "senha123"));
             users.put(67890L, new User(67890L, "senha456"));
-            // this.record(12345L, "senha123", "12345678910", "Seu toinho", "Rua da lagoa", "988994325");
-            // this.record(24235L, "senha456", "10987654321", "Seu jão", "Rua da lagoa", "988994234");
+            users.put(67890L, new User(24680L, "senha246"));
 
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -104,4 +109,5 @@ public class AuthServiceImpl implements AuthService {
             e.printStackTrace();
         }
     }
+
 }

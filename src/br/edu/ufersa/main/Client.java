@@ -54,7 +54,7 @@ public class Client {
 
             switch (op) {
                 case 1:
-                    System.out.println("========= ACCOUNT INFO =========\n");
+                    System.out.println("\n========= ACCOUNT INFO =========\n");
                     send(op, login.getAccountId(), -1, -1, -1);
                     System.out.println("================================");
                     
@@ -179,7 +179,6 @@ public class Client {
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

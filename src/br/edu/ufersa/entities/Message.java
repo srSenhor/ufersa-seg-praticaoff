@@ -17,7 +17,7 @@ public class Message implements Serializable {
         return content;
     }
     public void setContent(String content) {
-        if (!content.isBlank() && content != null) {
+        if (content != null && !content.isBlank()) {
             this.content = content;
         } else {
             this.content = "null";
@@ -28,7 +28,7 @@ public class Message implements Serializable {
         return hash;
     }
     public void setHash(String hash) {
-        if (!hash.isBlank() && hash != null) {
+        if (hash != null && !hash.isBlank()) {
             this.hash = hash;
         } else {
             this.hash = "null";

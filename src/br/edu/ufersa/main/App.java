@@ -73,7 +73,7 @@ public class App {
                     
                     mainMenu(login);
 
-                    // stub.logout(login);
+                    stub.logout(login);
                     System.out.println("Successful logged out!");
                 } else {
                     System.out.println("Failed to login, there is something wrong...");
