@@ -18,7 +18,7 @@ O objetivo do projeto é fazer uma simulação de um sistema cliente/servidor pa
 - O sistema deve ter/permitir:
 
     - **Autenticação de usuários**: usando o número da conta e uma senha, um usuário legítimo pode entrar no sistema e usar as demais funcionalidades.
-    - **Autenticação de mensagens**:
+    - **Autenticação de mensagens**: todas as mensagens devem estar criptografadas na ida e na volta e o sistema do bacnco deve descartar toda e qualquer mensagem de um usuário não legítimo.
     - **Criar conta corrente**: o usuário deve abrir uma conta para poder usar o sistema.
     - **Realizar saque**: um usuário legítimo deve conseguir realizar saques da sua conta desde que essa não esteja vazia.
     - **Realizar depósito**: um usuário legítimo deve conseguir realizar depósitos na sua conta.

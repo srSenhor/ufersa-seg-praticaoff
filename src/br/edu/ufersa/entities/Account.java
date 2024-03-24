@@ -24,6 +24,18 @@ public class Account {
         this.setFixedIncomeInvestment(0.0f);
     }
 
+    public Account(long accountID, String password, String cpf, String clientName, String address, String phoneNumber, float balance) {
+        this.setAccountID(accountID);
+        this.setPassword(password);
+        this.setCpf(cpf);
+        this.setClientName(clientName);
+        this.setAddress(address);
+        this.setPhoneNumber(phoneNumber);
+        this.setBalance(balance);
+        this.setSavingsInvestment(0.0f);
+        this.setFixedIncomeInvestment(0.0f);
+    }
+
     public long getAccountID() {
         return accountID;
     }

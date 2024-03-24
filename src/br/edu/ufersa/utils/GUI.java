@@ -52,16 +52,6 @@ public class GUI {
             Option: """);
     }
 
-    public static void investmentCheckOps() {
-        System.out.print("""
-            What kind of investment do you want to check...?
-            [1]    -    Savings
-            [2]    -    Fixed Income
-
-            Option: """);
-    }
-    
-
     public static void clearScreen() {
         try {
             final String os = System.getProperty("os.name");

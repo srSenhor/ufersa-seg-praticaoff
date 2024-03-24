@@ -17,7 +17,6 @@ import br.edu.ufersa.entities.Request;
 import br.edu.ufersa.entities.SessionLogin;
 import br.edu.ufersa.security.BankCipher;
 import br.edu.ufersa.service.skeletons.BankingService;
-// import br.edu.ufersa.service.skeletons.SessionService;
 import br.edu.ufersa.utils.GUI;
 import br.edu.ufersa.utils.ServicePorts;
 
@@ -26,7 +25,6 @@ public class Client {
     private SessionLogin login;
     private Scanner cin;
     private BankingService bankingStub;
-    // private SessionService sessionStub;
     
     public Client(SessionLogin login) {
         this.login = login;
@@ -37,9 +35,6 @@ public class Client {
     private void exec(){
 
         try {
-            
-            // Registry sessionReg = LocateRegistry.getRegistry("localhost", ServicePorts.SESSION_PORT.getValue());
-            // this.sessionStub = (SessionService) sessionReg.lookup("Session");
             Registry bankingReg = LocateRegistry.getRegistry("localhost", ServicePorts.BANKING_PORT.getValue());
             this.bankingStub = (BankingService) bankingReg.lookup("Banking");
 
@@ -55,14 +50,82 @@ public class Client {
 
             op = cin.nextInt();
             cin.nextLine();
+            float amount;
 
             switch (op) {
                 case 1:
                     System.out.println("========= ACCOUNT INFO =========\n");
-                    send(1, login.getAccountId(), -1, -1, -1);
+                    send(op, login.getAccountId(), -1, -1, -1);
                     System.out.println("================================");
+                    
+                    cin.nextLine();
+                    break;
+                case 2:
+                    System.out.print("Amount to be withdrawed: R$ ");
+                    amount = cin.nextFloat();
                     cin.nextLine();
                     
+                    System.out.println("========= WITHDRAW =========\n");
+                    send(op, login.getAccountId(), -1, -1, amount);
+                    System.out.println("============================\n");
+                    
+                    cin.nextLine();
+                    break;
+                case 3:
+                    System.out.print("Amount to be deposited: R$ ");
+                    amount = cin.nextFloat();
+                    cin.nextLine();
+        
+                    System.out.println("========= DEPOSIT =========\n");
+                    send(op, login.getAccountId(), -1, -1, amount);
+                    System.out.println("===========================\n");
+                    
+                    cin.nextLine();
+                    break;
+                case 4:
+                    System.out.println("========= BALANCE =========\n");
+                    send(op, login.getAccountId(), -1, -1, -1);
+                    System.out.println("===========================");
+                    
+                    cin.nextLine();
+                    break;
+                case 5:
+                    System.out.print("Receiver Account Id: ");
+
+                    int recAccID = cin.nextInt();
+                    cin.nextLine();
+        
+                    System.out.print("How much do you want to transfer: R$ ");
+                    amount = cin.nextFloat();
+                    cin.nextLine();
+
+                    System.out.println("\n============= TRANSFER =============\n");
+                    send(op, login.getAccountId(), recAccID, -1, amount);
+                    System.out.println("====================================");
+                    
+                    cin.nextLine();
+                    break;
+                case 6:
+                    GUI.investmentOps();
+                    int investType = cin.nextInt();
+                    cin.nextLine();
+        
+                    System.out.print("How much do you want to invest: R$ ");
+                    amount = cin.nextFloat();
+                    cin.nextLine();
+        
+                    System.out.println("\n============= INVEST =============\n");
+                    send(op, login.getAccountId(), -1, investType, amount);
+                    System.out.println("===================================\n");
+                    
+                    cin.nextLine();
+                    break;
+                case 7:
+                    System.out.println("\n========= CHECK INVESTMENTS =========\n");
+                    send(op, login.getAccountId(), -1, -1, -1);
+                    System.out.println("=====================================");
+
+                    cin.nextLine();
                     break;
                 case 8:
                     System.out.println("bye my friend!");
@@ -89,13 +152,19 @@ public class Client {
 
             Message response = bankingStub.receive(senderID, new Message(request, hash));
 
-            String responseTestHash = login.getSessionRSA().checkSign(response.getHash(), login.getServerPuKey());
-
-            if(!bc.genHash(response.getContent()).equals(responseTestHash)) {
-                System.err.println("Não foi possível realizar operação");
+            if (response == null) {
+                System.err.println("cannot do this, please try again...'");
             } else {
-                System.err.println(bc.dec(response.getContent()));
+                String responseTestHash = login.getSessionRSA().checkSign(response.getHash(), login.getServerPuKey());
+    
+                if(!bc.genHash(response.getContent()).equals(responseTestHash)) {
+                    System.err.println("an error has ocurred, please try again");
+                } else {
+                    System.err.println(bc.dec(response.getContent()));
+                }
+                
             }
+
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
